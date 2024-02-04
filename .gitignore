@@ -1,0 +1,36 @@
+# .gitignore
+
+# Streamlit configuration and cache
+.streamlit/*
+
+# Compiled python files
+*.py[cod]
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyd/
+*.pyo/
+*.pyc/
+
+# Virtual environments
+.env
+.venv/
+ENV/
+
+# IDE-specific files (e.g., PyCharm, VS Code)
+.idea/
+.vscode/
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
