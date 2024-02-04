@@ -10,19 +10,22 @@ def start_development_flow(requirements):
     
     satisfied = False
     while not satisfied and st.session_state.api_calls < max_api_calls:
-        st.write('about to generate code')
+        # st.write('about to generate code')
         code = generate_code(requirements)
+        if(code.startswith('Error')):
+            st.error(code)
+            return
         # st.write(code)
-        st.session_state.chat_log.append(f"Developer: {code}")
+        st.session_state.chat_log.append({"role": "developer", "message": code})
         review_result = review_code(code)
-        st.session_state.chat_log.append(f"Reviewer: {review_result['message']}")
+        st.session_state.chat_log.append({"role": "reviewer", "message": review_result['message']})
         satisfied = review_result['satisfied']
         st.session_state.api_calls += 2  # Counting both generate and review API calls
 
     if satisfied:
-        st.session_state.chat_log.append("Review Completed Successfully")
+        st.session_state.chat_log.append({"role": "system", "message": "Review Completed Successfully"})
     else:
-        st.session_state.chat_log.append("Max API calls reached")
+        st.session_state.chat_log.append({"role": "system", "message": "Max API calls reached"})
 
 
 def create_streamlit_app():
@@ -57,11 +60,17 @@ def create_streamlit_app():
     # for message in st.session_state.chat_log:
     #     st.text(message)
     # Display Chat History
-    for i, message in enumerate(st.session_state.chat_log):
-        if i % 2 == 0: # Assuming that Developer messages always start
-            st.markdown(f'**Developer**: {message}')
-        else:
-            st.markdown(f'**Reviewer**: {message}')
+    # for i, message in enumerate(st.session_state.chat_log):
+    #     if i % 2 == 0: # Assuming that Developer messages always start
+    #         st.markdown(f'**Developer**: {message}')
+    #     else:
+    #         st.markdown(f'**Reviewer**: {message}')
+    # Display Chat History using st.chat_message
+    for message_info in st.session_state.chat_log:
+        role = message_info["role"]
+        message = message_info["message"]
+        with st.chat_message(role if role in ["developer", "reviewer"] else "user"):
+            st.write(message)
 
 
 
