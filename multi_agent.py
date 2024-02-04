@@ -20,7 +20,7 @@ def start_development_flow(requirements):
         st.session_state.status = "Developer is creating code"
         code = generate_code(requirements) if last_code is None else generate_code(last_code + last_review_feedback)
         if code.startswith('Error'):
-            st.error("Error generating code. Development flow interrupted.")
+            st.error("Error generating code." + code)
             return
 
         with st.chat_message("Developer:"):
