@@ -1,24 +1,29 @@
 import streamlit as st
-from openai_integration import generate_code, review_code, generate_technical_requirements  # Hypothetical modules
+from openai_integration import generate_code, review_code, generate_technical_requirements, generate_improvements  # Hypothetical modules
 
 placeholder = """Please create a form for users to input their information. This should be in react. It should contain the following fields - 
 first name, last name, age, date of birth, gender. It should validate the values of each field. They are all required. 
 It should also post the data to a server and display a message to the user on the response. 
 It should also display errors in validation and api calls if necessary."""
 
-max_api_calls = 5
+max_api_calls = 4
 
-# Function to handle the development flow
 def start_development_flow(requirements):
-    st.session_state.status = "Starting"  # Initialize status
+    st.session_state.status = "Starting"
     satisfied = False
-    last_code = None  # Initialize last code
-    last_review_feedback = None  # Initialize last review feedback
+    last_code = None
+    last_review_feedback = None
 
     while not satisfied and st.session_state.api_calls < max_api_calls:
-        st.write(f"Status: {st.session_state.status}")  # Update status here
+        st.write(f"Status: {st.session_state.status}")
         st.session_state.status = "Developer is creating code"
-        code = generate_code(requirements) if last_code is None else generate_code(last_code + last_review_feedback)
+        
+        # Determine whether to generate new code or improve existing code based on feedback
+        if last_code is None:
+            code = generate_code(requirements)
+        else:
+            code = generate_improvements(last_code, last_review_feedback)
+        
         if code.startswith('Error'):
             st.error("Error generating code." + code)
             return
@@ -27,7 +32,7 @@ def start_development_flow(requirements):
             st.write(code)
 
         st.session_state.status = "Reviewer is reviewing code"
-        review_result = review_code(code) if last_review_feedback is None else review_code(code + last_review_feedback)
+        review_result = review_code(code)
         if "message" in review_result and "satisfied" in review_result:
             with st.chat_message("reviewer"):
                 st.write(review_result['message'])
@@ -36,12 +41,12 @@ def start_development_flow(requirements):
             st.error("Error in reviewing code. Development flow interrupted.")
             return
 
-        last_code = code  # Store the last code
-        last_review_feedback = review_result['message']  # Store the last review feedback
-        st.session_state.api_calls += 2  # Counting both generate and review API calls
+        last_code = code  # Store the last successfully generated or improved code
+        last_review_feedback = review_result['message']  # Store the last review feedback for potential improvements
+        st.session_state.api_calls += 2  # Counting both the generation/improvement and review API calls
 
     st.session_state.status = "Satisfied" if satisfied else "Max API calls reached"
-    st.write(f"Status: {st.session_state.status}")  # Update status one last time
+    st.write(f"Status: {st.session_state.status}")
 
 
 def create_streamlit_app():

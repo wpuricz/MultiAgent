@@ -8,36 +8,56 @@ model = 'gpt-4'
 
 def generate_code(requirements):
     openai.api_key = open_ai_key  # Use the provided API key
-    
+    prompt = f"Generate code based on the following requirements:\n{requirements}"
+
     try:
         response = openai.ChatCompletion.create(
             model=model,
             messages=[
                 {"role": "system", "content": "You are an AI trained to generate code based on technical requirements."},
-                {"role": "user", "content": f"Generate code based on the following requirements:\n{requirements}"},
+                {"role": "user", "content": prompt},
             ]
         )
-        # st.write(str(response))
-        # Assuming the last message in the response is the code
+        st.write("Sending prompt:", prompt)  # Print the prompt
+        st.write("Received response:", response)
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
         return f"Error generating code: {str(e)}"
 
-    
 
+def generate_improvements(code, improvements):
+    openai.api_key = open_ai_key  # Use the provided API key
+    prompt = f"Here are a list of improvements, please improve the following code as per the improvements stated:\nImprovements: {improvements}\nCode:\n{code}"   
+    try:
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are an AI trained to modify and improve code based on specific feedback."},
+                {"role": "user", "content": prompt },
+            ]
+        )
+        st.write("Sending prompt:", prompt)  # Print the prompt
+        st.write("Received response:", response)
+        # Assuming the last message in the response contains the improved code
+        return response['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        return f"Error generating improvements: {str(e)}"
+
+# TODO: only suggested improvements should be contained in best_practices, if there are no more improvements then mark the code as satisfied
 def review_code(code):
     score_threshold = 97
     openai.api_key = open_ai_key  # Use the provided API key
-
+    prompt = f"Review the following code snippet for quality and suggest improvements. You are a stickler for clean code. The code should be clean and follow best practice programming patterns.  Provide a score from 0 to 100 for the quality of the code and describe the best practice changes to implement. The output format should be a JSON object with 2 attributes - score (number), best_practices (string). The suggested improvements should be contained in the best_practices attribute. Here is the code:\n\n{code}"
     try:
         response = openai.ChatCompletion.create(
             model=model,
             messages=[
                 {"role": "system", "content": "You are an AI trained to review code for quality and suggest improvements."},
-                {"role": "user", "content": f"Review the following code snippet for quality and suggest improvements. You are a stickler for clean code. The code should be clean and follow best practice programming patterns.  Provide a score from 0 to 100 for the quality of the code and describe the best practice changes to implement. The output format should be a JSON object with 2 attributes - score (number), best_practices (string). Everything should be contained in these two attributes. Here is the code:\n\n{code}"},
+                {"role": "user", "content": prompt},
             ]
         )
-        st.write(response['choices'][0]['message']['content'])
+        st.write("Sending prompt:", prompt)  # Print the prompt
+        st.write("Received response:", response)
         # Assuming the last message in the response is the review message
         review_message = response['choices'][0]['message']['content'].strip()
         
