@@ -9,8 +9,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-model = 'gpt-3.5-turbo-0125'
+# model = 'gpt-3.5-turbo-0125'
 # model = 'gpt-4'
+model = 'gpt-3.5-turbo'
 
 def generate_code(requirements):
     logger.info('started generate_code')
@@ -24,8 +25,7 @@ def generate_code(requirements):
                 {"role": "user", "content": prompt},
             ]
         )
-        # st.write("Sending prompt:", prompt)  # Print the prompt
-        # st.write("Received response:", response)
+        
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Error generating code: {str(e)}"
@@ -38,7 +38,7 @@ def generate_improvements(code, improvements):
     {improvements}
     Code:
     {code}"""
-    st.write(prompt.strip());
+    
     
     try:
         response = client.chat.completions.create(
@@ -48,7 +48,6 @@ def generate_improvements(code, improvements):
                 {"role": "user", "content": prompt },
             ]
         )
-        # st.write("Sending prompt:", prompt)  # Print the prompt
         # logger.info("Received response:", response)
         # Assuming the last message in the response contains the improved code
         return response.choices[0].message.content.strip()
@@ -79,13 +78,11 @@ def review_code(code):
                 {"role": "system", "content": "You are an AI trained to review code for quality and suggest improvements."},
                 {"role": "user", "content": prompt.strip()},
             ],
-            response_format={"type","json_object"}
+            # response_format={"type","json_object"}
         )
         logger.info('got response for')
         # logger.info("Received response:", response)
         
-        # st.write("Sending prompt:", prompt)  # Print the prompt
-        st.write("Received response:", response)
         # Assuming the last message in the response is the review message
         review_message = response.choices[0].message.content.strip()
         
