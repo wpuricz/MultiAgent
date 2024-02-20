@@ -1,12 +1,13 @@
 import streamlit as st
 from openai_integration import generate_code, review_code, generate_technical_requirements, generate_improvements  # Hypothetical modules
+import logging
 
-placeholder = """Please create a form for users to input their information. This should be in react. It should contain the following fields - 
-first name, last name, age, date of birth, gender. It should validate the values of each field. They are all required. 
-It should also post the data to a server and display a message to the user on the response. 
-It should also display errors in validation and api calls if necessary."""
+placeholder = "Please create a form for users to input their information. This should be in react. It should contain the following fields - \
+first name, last name, age, date of birth, gender. It should validate the values of each field. They are all required. \
+It should also post the data to a server and display a message to the user on the response. \
+It should also display errors in validation and api calls if necessary."
 
-max_api_calls = 4
+max_api_calls = 2
 
 def start_development_flow(requirements):
     st.session_state.status = "Starting"
@@ -51,6 +52,11 @@ def start_development_flow(requirements):
 
 def create_streamlit_app():
     # Initialize session states
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    logger.info('This is an info message')
+    logger.info('This is another info message')
+    
     if 'api_calls' not in st.session_state:
         st.session_state.api_calls = 0
     if 'chat_log' not in st.session_state:
@@ -64,7 +70,7 @@ def create_streamlit_app():
     # Left Column: Input components
     # with left_column:
     st.title("Multi-Agent AI Application")
-    requirements = st.text_area("Enter Technical Requirements", value=placeholder, height=400)
+    requirements = st.text_area("Enter Technical Requirements", value=placeholder.strip(), height=400)
     generate_button = st.button("Generate Requirements")
     submit_button = st.button("Submit Requirements")
     # Display Status
