@@ -7,7 +7,7 @@ first name, last name, age, date of birth, gender. It should validate the values
 It should also post the data to a server and display a message to the user on the response. \
 It should also display errors in validation and api calls if necessary."
 
-max_api_calls = 8
+max_api_calls = 6
 
 def start_development_flow(requirements):
     st.session_state.status = "Starting"
@@ -30,13 +30,13 @@ def start_development_flow(requirements):
             return
 
         with st.chat_message("Developer:"):
-            st.write(code)
+            st.markdown(code)
 
         st.session_state.status = "Reviewer is reviewing code"
         review_result = review_code(code)
         if "message" in review_result and "satisfied" in review_result:
             with st.chat_message("reviewer"):
-                st.write(review_result['message'])
+                st.markdown(review_result['message'])
                 satisfied = review_result['satisfied']
         else:
             st.error("Error in reviewing code. Development flow interrupted.")
@@ -65,7 +65,7 @@ def create_streamlit_app():
 
     st.title("Multi-Agent AI Application")
     requirements = st.text_area("Enter Technical Requirements", value=placeholder.strip(), height=400)
-    generate_button = st.button("Generate Requirements")
+    # generate_button = st.button("Generate Requirements")
     submit_button = st.button("Submit Requirements")
     # Display Status
     st.subheader("Status:")
@@ -77,11 +77,11 @@ def create_streamlit_app():
         role = message_info["role"]
         message = message_info["message"]
         with st.chat_message(role if role in ["developer", "reviewer"] else "user"):
-            st.write(message)
+            st.markdown(message)
 
     # Handling Generate Button
-    if generate_button:
-        requirements = generate_technical_requirements()  # Hypothetical function to generate requirements
+    # if generate_button:
+        # requirements = generate_technical_requirements()  # Hypothetical function to generate requirements
 
     # Handling Submit Button
     if submit_button and requirements:

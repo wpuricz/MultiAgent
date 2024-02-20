@@ -1,9 +1,7 @@
 from openai import OpenAI
 import streamlit as st
 import json
-import os
 import logging
-#https://medium.com/@ralfelfving/openai-json-response-format-explained-with-example-dynamically-render-a-quiz-app-2050d1e719b0
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -14,7 +12,6 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 model = 'gpt-3.5-turbo'
 
 def generate_code(requirements):
-    logger.info('started generate_code')
     prompt = f"Generate code based on the following requirements:\n{requirements}"
 
     try:
@@ -80,8 +77,8 @@ def review_code(code):
             ],
             # response_format={"type","json_object"}
         )
-        logger.info('got response for')
-        # logger.info("Received response:", response)
+        # logger.info('got response for')
+        logger.info("Received response:", response)
         
         # Assuming the last message in the response is the review message
         review_message = response.choices[0].message.content.strip()
