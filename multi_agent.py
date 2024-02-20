@@ -7,7 +7,7 @@ first name, last name, age, date of birth, gender. It should validate the values
 It should also post the data to a server and display a message to the user on the response. \
 It should also display errors in validation and api calls if necessary."
 
-max_api_calls = 2
+max_api_calls = 8
 
 def start_development_flow(requirements):
     st.session_state.status = "Starting"
@@ -47,15 +47,13 @@ def start_development_flow(requirements):
         st.session_state.api_calls += 2  # Counting both the generation/improvement and review API calls
 
     st.session_state.status = "Satisfied" if satisfied else "Max API calls reached"
-    st.write(f"Status: {st.session_state.status}")
+    # st.write(f"Status: {st.session_state.status}")
 
 
 def create_streamlit_app():
     # Initialize session states
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
-    logger.info('This is an info message')
-    logger.info('This is another info message')
     
     if 'api_calls' not in st.session_state:
         st.session_state.api_calls = 0
@@ -64,21 +62,15 @@ def create_streamlit_app():
     if 'status' not in st.session_state:
         st.session_state.status = "Not started"  # Initialize status
 
-    # Set up a two-column layout
-    # left_column, right_column = st.columns(2)
 
-    # Left Column: Input components
-    # with left_column:
     st.title("Multi-Agent AI Application")
     requirements = st.text_area("Enter Technical Requirements", value=placeholder.strip(), height=400)
     generate_button = st.button("Generate Requirements")
     submit_button = st.button("Submit Requirements")
     # Display Status
     st.subheader("Status:")
-    st.write(st.session_state.status)
+    # st.write(st.session_state.status)
 
-    # Right Column: Chat messages
-    # with right_column:
     chat_history = st.empty()
     # Display Chat History using st.chat_message
     for message_info in st.session_state.chat_log:
