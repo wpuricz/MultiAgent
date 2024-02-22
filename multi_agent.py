@@ -7,7 +7,7 @@ first name, last name, age, date of birth, gender. It should validate the values
 It should also post the data to a server and display a message to the user on the response. \
 It should also display errors in validation and api calls if necessary."
 
-max_api_calls = 6
+max_api_calls = 8
 
 def start_development_flow(requirements):
     st.session_state.status = "Starting"

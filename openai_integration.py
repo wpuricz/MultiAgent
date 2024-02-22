@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-# model = 'gpt-3.5-turbo-0125'
+review_model = 'gpt-3.5-turbo-0125'
 # model = 'gpt-4'
 model = 'gpt-3.5-turbo'
 
@@ -59,29 +59,34 @@ def review_code(code):
     describe the improvements to implement in the improvements attribute. The output should be the suggested improvements, you do not need to provide sample code. 
     If there are no new suggested improvements, the hasImprovements attribute should be false, otherwise it should be true.
     
-    Please respond in json format with this structure:
-    {{"improvements":"improvements go here","hasImprovements":"false"}}
-
-    Do NOT return any code or code fences.
-
     Here is the code:
     {code}"""
     
     try:
-        logger.info(prompt)
+        # logger.info(prompt)
         response = client.chat.completions.create(
-            model=model,
+            model=review_model,
             messages=[
-                {"role": "system", "content": "You are an AI trained to review code for quality and suggest improvements."},
+                {"role": "system", "content": 
+                 """You are an AI trained to review code for quality and suggest improvements. Do NOT return any code or code fences.
+                 Your response should come back in JSON format with the following structure:
+                 
+                    {
+                        improvements: string,
+                        hasImprovements: boolean
+                    }
+
+                 """
+                 },
                 {"role": "user", "content": prompt.strip()},
             ],
             # response_format={"type","json_object"}
         )
         # logger.info('got response for')
-        logger.info("Received response:", response)
-        
+        # logger.info("Received response:", response)
         # Assuming the last message in the response is the review message
         review_message = response.choices[0].message.content.strip()
+        # logger.info(review_message)
         
         # Extract JSON object from the content field
         try:
@@ -90,8 +95,8 @@ def review_code(code):
             raise Exception("Failed to parse the JSON response: " + json.JSONDecodeError)
 
         # # Extract score and best practices from the JSON object
-        improvements = review_data.get("improvements")
-        has_improvements = review_data.get("hasImprovements")
+        improvements = review_data["improvements"]
+        has_improvements = review_data["hasImprovements"]
         
         # Determine satisfaction based on the review score
         # satisfied = review_score is not None and review_score > score_threshold
