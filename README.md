@@ -48,10 +48,11 @@ or log to terminal
 streamlit run multi_agent.py
 ```
 
+### Example Conversations
+
+- [React Form](./example_conversations/multi_agent%20·%20Streamlit%20Form.pdf)
+- [Python Data](./example_conversations/multi_agent%20·%20Python%20data.pdf)
+
 ### Screenshot
 
 ![Multi Agent](Multiagent.png?raw=true "Multi Agent")
-
-### Video
-
-[![Multi Agent](Multiagent.png)](MultiAgentForm-2024-02-24_13.57.26.mp4)
